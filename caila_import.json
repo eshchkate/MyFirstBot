@@ -1,4 +1,5 @@
 {
+
   "project": {
     "id": "jaicf-jaicp-caila-template",
     "name": "jaicf-jaicp-caila-template",
@@ -115,7 +116,8 @@
       "patterns": []
     }
   ],
-  "entities": [],
+  "entities": [
+  ],
   "enabledSystemEntities": [
     "duckling.number",
     "duckling.time",

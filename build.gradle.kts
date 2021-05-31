@@ -30,6 +30,8 @@ dependencies {
     implementation("com.just-ai.jaicf:core:$jaicf")
     implementation("com.just-ai.jaicf:jaicp:$jaicf")
     implementation("com.just-ai.jaicf:caila:$jaicf")
+    implementation("com.squareup.okhttp3:okhttp:4.9.1")
+    implementation ("com.google.code.gson:gson:2.8.7")
 }
 
 tasks {
