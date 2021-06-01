@@ -40,8 +40,8 @@ val mainScenario = Scenario {
                     val type = response.weather[0].main
                     val description = response.weather[0].description
                     reactions.say(
-                        "В городе ${city.capitalize()} температура воздуха $temperature °C, " +
-                                "ощущается как $feelsLike °C."
+                        "В городе ${city.capitalize()} температура воздуха $temperature°C, " +
+                                "ощущается как $feelsLike°C."
                     )
                     reactions.run {
                         var text = ""
@@ -134,7 +134,7 @@ val mainScenario = Scenario {
                     )
                 } else {
                     reactions.say(
-                        "Нет, ничего такого там нет. ${if (type.isNotEmpty()) "На улице в городе ${city.capitalize()} ${description.toLowerCase()}" else ""}"
+                        "Нет, ничего такого там нет. ${if (type.isNotEmpty()) "На улице в городе ${city.capitalize()} ${description.toLowerCase()}" else ""}."
                     )
                 }
             }
