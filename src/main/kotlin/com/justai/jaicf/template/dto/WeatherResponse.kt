@@ -1,4 +1,4 @@
-package com.justai.jaicf.template
+package com.justai.jaicf.template.dto
 
 import com.google.gson.annotations.SerializedName
 

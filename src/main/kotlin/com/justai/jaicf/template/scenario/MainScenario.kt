@@ -2,11 +2,14 @@ package com.justai.jaicf.template.scenario
 
 import com.justai.jaicf.activator.caila.caila
 import com.justai.jaicf.builder.Scenario
-import com.justai.jaicf.template.WeatherService
+import com.justai.jaicf.template.service.CityService
+import com.justai.jaicf.template.service.WeatherService
 import java.time.LocalDateTime
 
-
 val mainScenario = Scenario {
+
+    val weatherService = WeatherService()
+    val cityService = CityService()
 
     state("start") {
         activators {
@@ -29,16 +32,15 @@ val mainScenario = Scenario {
         }
         action {
             activator.caila?.run {
-                val weatherService = WeatherService()
-                val city = caila?.slots?.get("city")
-                val response = weatherService.getDataWeather(city.toString())
+                val city = cityService.getCity(caila?.slots?.get("city"))
+                val response = weatherService.getDataWeather(city)
                 if (response.weather != null) {
                     val temperature = response.main.temp.toInt()
                     val feelsLike = response.main.feelsLike.toInt()
                     val type = response.weather[0].main
                     val description = response.weather[0].description
                     reactions.say(
-                        "В городе ${city?.capitalize()} температура воздуха $temperature °C, " +
+                        "В городе ${city.capitalize()} температура воздуха $temperature °C, " +
                                 "ощущается как $feelsLike °C."
                     )
                     reactions.run {
@@ -54,7 +56,7 @@ val mainScenario = Scenario {
                     }
                 } else {
                     reactions.sayRandom(
-                        "Так пока не понимаю :( Просто напиши название города и все получится",
+                        "Заминочка вышла :( Напиши название города еще раз и все получится",
                         "Ты точно не придумал этот город. Попробуй еще раз, пожалуйста.",
                     )
                 }
@@ -67,11 +69,10 @@ val mainScenario = Scenario {
             }
             action {
                 activator.caila?.run {
-                    val city = caila?.slots?.get("city")
-                    val weatherService = WeatherService()
-                    val response = weatherService.getDataWeather(city.toString())
+                    val city = cityService.getCity(caila?.slots?.get("city"))
+                    val response = weatherService.getDataWeather(city)
                     reactions.say(
-                        "Лови детали прогноза:\n\n" +
+                        "Лови детали прогноза: \n" +
                                 "влажность воздуха ${response.main.humidity}%, " +
                                 "атмосферное давление ${response.main.pressure} мм рт. ст., " +
                                 "скорость ветра ${response.wind.speed} м/с."
@@ -93,13 +94,60 @@ val mainScenario = Scenario {
         }
     }
 
+    state("temperature") {
+        activators {
+            intent("Temperature")
+        }
+        action {
+            activator.caila?.run {
+                val city = cityService.getCity(caila?.slots?.get("city"))
+                val response = weatherService.getDataWeather(city)
+                val temperature = response.main.temp.toInt()
+
+                if (response.weather != null) {
+                    reactions.say(
+                        "В городе ${city.capitalize()} сейчас $temperature °C"
+                    )
+                } else {
+                    reactions.say("Источники решили не делиться с нами этой информацией, попробуй позже :)")
+                }
+            }
+        }
+    }
+
+    state("rainfall") {
+        activators {
+            intent("Rainfall")
+        }
+        action {
+            activator.caila?.run {
+
+                val city = cityService.getCity(caila?.slots?.get("city"))
+                val rainfall = caila?.slots?.get("rainfall")
+                val response = weatherService.getDataWeather(city)
+                val type = response.weather[0].main
+                val description = response.weather[0].description
+
+                if (type.contains(rainfall?.toLowerCase().toString(), ignoreCase = true)) {
+                    reactions.say(
+                        "Да, в городе ${city.capitalize()} $type ${if (rainfall?.toLowerCase() == "осадки") "Советую захватить зонтик" else "Одевайся теплее"}"
+                    )
+                } else {
+                    reactions.say(
+                        "Нет, ничего такого там нет. ${if (type.isNotEmpty()) "На улице в городе ${city.capitalize()} ${description.toLowerCase()}" else ""}"
+                    )
+                }
+            }
+        }
+    }
+
     state("bye") {
         activators {
             intent("Bye")
         }
         action {
             reactions.say(
-                "До свидания."
+                "До свидания ;)"
             )
         }
     }
