@@ -77,6 +77,7 @@ val mainScenario = Scenario {
                                 "атмосферное давление ${response.main.pressure} мм рт. ст., " +
                                 "скорость ветра ${response.wind.speed} м/с."
                     )
+                    reactions.go("/Weather")
                 }
             }
         }
@@ -90,6 +91,7 @@ val mainScenario = Scenario {
                     "До встречи, хорошего ${if (LocalDateTime.now().hour < 17) "дня" else "вечера"}!",
                     "Обращайся, если что :)"
                 )
+                reactions.go("/Weather")
             }
         }
     }
